@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="MathQuest Adventures - An engaging educational math game for children ages 3-13. Learn addition, subtraction, multiplication, and division through fun interactive gameplay.">
+    <meta name="keywords" content="math game, kids education, learning app, arithmetic, children's app">
+    <meta name="author" content="S3 Software">
+    <meta name="app-version" content="1.0.0">
+    <meta property="og:title" content="MathQuest Adventures">
+    <meta property="og:description" content="Make learning math fun! Interactive educational game for kids.">
+    <meta property="og:type" content="website">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="MathQuest">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23667eea' width='192' height='192'/><text x='50%' y='50%' font-size='120' font-weight='bold' text-anchor='middle' dominant-baseline='middle' fill='white'>🌟</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23667eea' width='192' height='192' rx='40'/><text x='50%' y='50%' font-size='120' font-weight='bold' text-anchor='middle' dominant-baseline='middle' fill='white'>🌟</text></svg>">
+    <title>MathQuest Adventures - Educational Math Game for Kids</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Bubblegum+Sans&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B9D;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --purple: #A06CD5;
+            --orange: #FF9F68;
+            --green: #6BCF7F;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--purple);
+            font-family: 'Bubblegum Sans', cursive;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2C3E50;
+            margin-bottom: 30px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--purple));
+            color: white;
+            border: none;
+            padding: 25px;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn.selected {
+            background: linear-gradient(135deg, var(--green), var(--secondary));
+        }
+
+        .question {
+            font-size: 3em;
+            text-align: center;
+            color: #2C3E50;
+            margin: 30px 0;
+            font-weight: 700;
+        }
+
+        .answer-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .answer-btn {
+            background: white;
+            border: 4px solid var(--secondary);
+            padding: 30px;
+            border-radius: 15px;
+            font-size: 2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .answer-btn:hover {
+            transform: scale(1.05);
+            background: #f0f0f0;
+        }
+
+        .answer-btn.correct {
+            background: var(--green);
+            color: white;
+            border-color: var(--green);
+        }
+
+        .answer-btn.wrong {
+            background: #FF6B6B;
+            color: white;
+            border-color: #FF6B6B;
+        }
+
+        .feedback {
+            text-align: center;
+            font-size: 2em;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .feedback.correct {
+            color: var(--green);
+        }
+
+        .feedback.wrong {
+            color: #FF6B6B;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .score-item {
+            background: linear-gradient(135deg, var(--accent), var(--orange));
+            padding: 15px 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .score-item label {
+            display: block;
+            font-size: 0.9em;
+            color: rgba(0,0,0,0.7);
+        }
+
+        .score-item .value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: white;
+        }
+
+        .next-btn {
+            display: none;
+            background: linear-gradient(135deg, var(--primary), var(--purple));
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .change-btn {
+            background: linear-gradient(135deg, var(--orange), var(--accent));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .watermark {
+            position: fixed;
+            bottom: 10px;
+            right: 15px;
+            font-size: 0.75em;
+            color: rgba(0, 0, 0, 0.3);
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            pointer-events: none;
+            z-index: 1000;
+            text-align: right;
+            line-height: 1.2;
+        }
+
+        .watermark span {
+            display: block;
+        }
+
+        .app-label {
+            text-align: center;
+            font-size: 0.85em;
+            color: rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #f0f0f0;
+            font-weight: 500;
+        }
+
+        .app-label a {
+            color: var(--purple);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .app-label a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .question {
+                font-size: 2em;
+            }
+            .answer-btn {
+                font-size: 1.5em;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark">
+        <span>© S3Software</span>
+        <span>v1.0.0</span>
+    </div>
+    <div class="container">
+        <h1>🌟 MathQuest Adventures 🌟</h1>
+        
+        <!-- Age Selection Screen -->
+        <div id="ageScreen" class="screen active">
+            <h2>Choose Your Age Group!</h2>
+            <div class="button-grid">
+                <button class="btn" onclick="selectAge('3-5')">
+                    👶 Ages 3-5<br>
+                    <small>Toddler</small>
+                </button>
+                <button class="btn" onclick="selectAge('4-6')">
+                    🎨 Ages 4-6<br>
+                    <small>Preschool</small>
+                </button>
+                <button class="btn" onclick="selectAge('7-9')">
+                    📚 Ages 7-9<br>
+                    <small>Elementary</small>
+                </button>
+                <button class="btn" onclick="selectAge('10-12')">
+                    🎓 Ages 10-12<br>
+                    <small>Middle School</small>
+                </button>
+                <button class="btn" onclick="selectAge('13+')">
+                    🚀 Ages 13+<br>
+                    <small>Advanced</small>
+                </button>
+            </div>
+        </div>
+
+        <!-- Difficulty Selection Screen -->
+        <div id="difficultyScreen" class="screen">
+            <h2>Choose Your Difficulty!</h2>
+            <div class="button-grid">
+                <button class="btn" onclick="selectDifficulty('easy')">
+                    😊 Easy<br>
+                    <small>Learn at your pace</small>
+                </button>
+                <button class="btn" onclick="selectDifficulty('medium')">
+                    🚀 Medium<br>
+                    <small>Balanced challenge</small>
+                </button>
+                <button class="btn" onclick="selectDifficulty('hard')">
+                    🔥 Hard<br>
+                    <small>Expert mode!</small>
+                </button>
+            </div>
+            <button class="change-btn" onclick="goBack()">← Go Back</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen">
+            <div class="score-board">
+                <div class="score-item">
+                    <label>Score</label>
+                    <div class="value" id="score">0</div>
+                </div>
+                <div class="score-item">
+                    <label>Streak</label>
+                    <div class="value" id="streak">0</div>
+                </div>
+                <div class="score-item">
+                    <label>Level</label>
+                    <div class="value" id="level">1</div>
+                </div>
+            </div>
+
+            <div class="question" id="question">2 + 2 = ?</div>
+            <div class="answer-grid" id="answers"></div>
+            <div class="feedback" id="feedback"></div>
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question! 🎉</button>
+            <button class="change-btn" onclick="exitGame()">🚪 Exit Game</button>
+        </div>
+
+        <div class="app-label">
+            <strong>MathQuest Adventures</strong><br>
+            Educational Math Game for Kids • Version 1.0.0<br>
+            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+        </div>
+    </div>
+
+    <script>
+        // Register Service Worker for offline support (optional)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {
+                // Service Worker registration optional - app works without it
+            });
+        }
+
+        // Game State
+        const state = {
+            age: null,
+            difficulty: null,
+            score: 0,
+            streak: 0,
+            level: 1,
+            answered: false,
+            correctAnswer: null
+        };
+
+        // Select Age
+        function selectAge(age) {
+            state.age = age;
+            showScreen('difficultyScreen');
+        }
+
+        // Select Difficulty
+        function selectDifficulty(difficulty) {
+            state.difficulty = difficulty;
+            showScreen('gameScreen');
+            generateQuestion();
+        }
+
+        // Show Screen
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Go Back to Age Selection
+        function goBack() {
+            state.age = null;
+            state.difficulty = null;
+            showScreen('ageScreen');
+        }
+
+        // Exit Game
+        function exitGame() {
+            state.score = 0;
+            state.streak = 0;
+            state.level = 1;
+            state.age = null;
+            state.difficulty = null;
+            showScreen('ageScreen');
+            updateScore();
+        }
+
+        // Generate Question
+        function generateQuestion() {
+            state.answered = false;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('nextBtn').style.display = 'none';
+
+            let num1, num2, operation, correct;
+            
+            // Determine range based on age
+            let maxNum;
+            switch(state.age) {
+                case '3-5': maxNum = 5; break;
+                case '4-6': maxNum = 10; break;
+                case '7-9': maxNum = 20; break;
+                case '10-12': maxNum = 50; break;
+                case '13+': maxNum = 100; break;
+                default: maxNum = 20;
+            }
+
+            // Adjust based on difficulty
+            if (state.difficulty === 'easy') {
+                maxNum = Math.floor(maxNum / 2);
+            } else if (state.difficulty === 'hard') {
+                maxNum = Math.floor(maxNum * 1.5);
+            }
+
+            // Determine operations based on age
+            let ops = ['+'];
+            if (state.age !== '3-5') {
+                ops.push('-');
+            }
+            if (state.age !== '4-6' && state.age !== '3-5') {
+                ops.push('×', '÷');
+            }
+
+            operation = ops[Math.floor(Math.random() * ops.length)];
+
+            // Generate numbers
+            if (operation === '÷') {
+                num2 = Math.floor(Math.random() * 10) + 2;
+                correct = Math.floor(Math.random() * Math.floor(maxNum / num2)) + 1;
+                num1 = num2 * correct;
+            } else if (operation === '×') {
+                num1 = Math.floor(Math.random() * 12) + 1;
+                num2 = Math.floor(Math.random() * 12) + 1;
+                correct = num1 * num2;
+            } else if (operation === '-') {
+                num1 = Math.floor(Math.random() * maxNum) + 1;
+                num2 = Math.floor(Math.random() * num1) + 1;
+                correct = num1 - num2;
+            } else {
+                num1 = Math.floor(Math.random() * maxNum) + 1;
+                num2 = Math.floor(Math.random() * maxNum) + 1;
+                correct = num1 + num2;
+            }
+
+            state.correctAnswer = correct;
+            document.getElementById('question').textContent = `${num1} ${operation} ${num2} = ?`;
+
+            // Generate answer options
+            const options = new Set([correct]);
+            while (options.size < 4) {
+                let wrong = correct + Math.floor(Math.random() * 10) - 5;
+                if (wrong > 0 && wrong !== correct) {
+                    options.add(wrong);
+                }
+            }
+
+            // Display answers
+            const answersDiv = document.getElementById('answers');
+            answersDiv.innerHTML = '';
+            Array.from(options).sort(() => Math.random() - 0.5).forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option, btn);
+                answersDiv.appendChild(btn);
+            });
+
+            updateScore();
+        }
+
+        // Check Answer
+        function checkAnswer(answer, btn) {
+            if (state.answered) return;
+            state.answered = true;
+
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(b => b.style.pointerEvents = 'none');
+
+            if (answer === state.correctAnswer) {
+                btn.classList.add('correct');
+                document.getElementById('feedback').textContent = '🎉 Amazing!';
+                document.getElementById('feedback').className = 'feedback correct';
+                state.score += 10 * state.level;
+                state.streak++;
+
+                if (state.streak % 5 === 0) {
+                    state.level++;
+                }
+            } else {
+                btn.classList.add('wrong');
+                buttons.forEach(b => {
+                    if (parseInt(b.textContent) === state.correctAnswer) {
+                        b.classList.add('correct');
+                    }
+                });
+                document.getElementById('feedback').textContent = '💪 Try again!';
+                document.getElementById('feedback').className = 'feedback wrong';
+                state.streak = 0;
+            }
+
+            document.getElementById('nextBtn').style.display = 'block';
+            updateScore();
+        }
+
+        // Next Question
+        function nextQuestion() {
+            generateQuestion();
+        }
+
+        // Update Score
+        function updateScore() {
+            document.getElementById('score').textContent = state.score;
+            document.getElementById('streak').textContent = state.streak;
+            document.getElementById('level').textContent = state.level;
+        }
+    </script>
+</body>
+</html>
